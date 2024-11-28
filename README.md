@@ -20,7 +20,9 @@ This project involves building a robust end-to-end data pipeline to process Spot
      - Python libraries `kagglehub` and `requests` are employed for automation.
      ```python
      import kagglehub
-     dataset_path = kagglehub.dataset_download("spotify-dataset")
+     #Download latest version
+     path = kagglehub.dataset_download("dhruvildave/spotify-charts")
+     print("Path to dataset files:", path)
      ```
   2. **Upload to Blob Storage via Airflow**:
      - Apache Airflow orchestrates the automation due to its strengths in workflow automation, such as scheduling, monitoring, and managing complex data pipelines. It was specifically chosen for its compatibility with WSL for Windows users, allowing seamless execution in a Windows environment, and its ease of integration with Azure services for handling large-scale data workflows.
