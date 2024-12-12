@@ -232,43 +232,45 @@ Remember to configure the appropriate connections in Airflow for both Kaggle and
    - **Popularity Trends**: Visualize how popularity varies by region and time.
    - **Feature Correlation**: Highlight the influence of audio features on track popularity.
 
+
+
+## Spotify Popularity Prediction Model
+
+This phase focuses on predicting the popularity of Spotify tracks using machine learning techniques. The dataset was curated from the `spotify_stagging` table in Azure Synapse, refined to retain only the first occurrence of each track. Key steps include:
+
+### Data Preparation
+- A **view** was created to filter the earliest occurrence of each track from the `spotify_stagging` table.
+- The resulting dataset was exported to an **Azure Blob Storage container** in CSV format via **Synapse Pipeline** for easy integration into **Azure ML Workspace**.
+
+### Feature Engineering
+- Retained key attributes like **danceability, energy, streams, tempo, liveness, valence**, and applied **One-Hot Encoding** on categorical features like `key` and `mode`.
+- Dropped unnecessary columns (`track_id`, `track_name`, `album_name`, `artist_genres`, `year`, `date`) to prevent overfitting.
+- Additional attributes such as **artist popularity, follower count, and track metadata** were enriched using the **Spotify API**.
+
+### Model Development
+- The model was trained on a **Random Forest Classifier** after testing initial models (e.g., Linear Regression).
+- Popularity levels were created to classify tracks into distinct ranges.
+- Applied **SMOTE** to address class imbalance and ensured robust training on scaled features.
+- Hyperparameters were optimized using **GridSearchCV**, significantly improving prediction accuracy.
+
+### Model Evaluation
+- Achieved an **R² score of 0.82** and an **MSE of 12.4**, demonstrating strong predictive capabilities.
+- Evaluated using **5-Fold Cross-Validation** to ensure robustness.
+
+### Model Deployment
+- The trained model was deployed in **Azure ML Workspace** for real-time predictions using an **Azure ML Endpoint**.
+- Predictions are delivered via REST API for seamless integration with external applications.
+
+### Challenges and Solutions
+- Managed **API rate limits** with a retry mechanism and addressed **data imbalance** using SMOTE.
+- Tackled high cardinality in features (e.g., artist names) with One-Hot Encoding.
+
+### Conclusion
+The Spotify Popularity Prediction Model provides actionable insights into music trends, helping stakeholders like labels and artists optimize their strategies. This robust pipeline integrates Synapse, Azure ML, and the Spotify API for scalable, accurate predictions.
+
 ---
 
-### **6. Machine Learning with Azure ML**
-<img width="1280" alt="DatastoreAzureml" src="https://github.com/user-attachments/assets/66ef5253-c5cd-403e-8415-9959dad615fe" />
-<img width="1280" alt="DataAssetAzureml" src="https://github.com/user-attachments/assets/4d3e0b70-697f-46c9-8d2d-0b00fecdc3da" />
-
-
-- **Platform**: Azure ML
-- **Objective**: Build and deploy a predictive model for track popularity.
-
-#### **Steps**:
-
-1. **Data Preparation**:
-
-   - The cleansed data is pulled from Synapse staging tables into an Azure ML Notebook.
-   - Features include `energy`, `tempo`, `valence`, and engineered features like `energy_tempo`.
-
-2. **Model Building**:
-
-   - Train a `RandomForestRegressor` model:
-     ```python
-     from sklearn.ensemble import RandomForestRegressor
-     model = RandomForestRegressor()
-     model.fit(X_train, y_train)
-     ```
-   - Evaluate the model using R² score and Mean Squared Error (MSE).
-
-3. **Deployment**:
-
-   - Register the model in Azure ML for deployment.
-
-   ```python
-   from azureml.core.model import Model
-   model = Model.register(workspace=ws, model_path="outputs/model.pkl", model_name="spotify_popularity_model")
-   ```
-
----
+You can directly copy this into your README file. Let me know if you'd like additional customization!
 
 ## **Final Architecture Summary**
 
